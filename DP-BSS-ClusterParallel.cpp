@@ -18,7 +18,7 @@
 using namespace std;
 using namespace arma;
 
-class ebreg {
+class DP_BSS {
     public:
         // Initialization
         void init(int sparse, int eps, double sens_scale, int max_iteration,
@@ -207,7 +207,7 @@ mat randmvn(vec mu, mat Sigma, int n) {
     return out;
 };
 
-vector<double> fit_MCMC(ebreg model, mat X, vec y, vec beta, int i) {
+vector<double> fit_MCMC(DP_BSS model, mat X, vec y, vec beta, int i) {
     // switch different seeds to get different results for each chain
     srand(42+i); // srand(42+i*5)
 
@@ -342,7 +342,7 @@ int main() { // parallel
     cout << "Sensitivity Scale: " << sens_scale << endl;
     
     // initialize model
-    ebreg model;
+    DP_BSS model;
     model.init(sparse, eps, sens_scale, max_iteration, standardization, initial, F1_score_size);
 
     clock_t start = clock();
