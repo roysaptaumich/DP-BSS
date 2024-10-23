@@ -36,5 +36,7 @@ g++ DP_BSS.cpp -o DP_BSS_Expr -O2 \
     -L $OPENBLAS_ROOT \
     -lopenblas -lgurobi_g++5.2 -lgurobi100
 
-./DP_BSS_Expr
+./DP_BSS_Expr 1 # chain_number
+
+python load_cpp_result 0.5 10000 strong 1 Uniform 3.5 4 # eps, iter, signal, num_chain, data_type, K, sparse
 ```

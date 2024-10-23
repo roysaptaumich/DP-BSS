@@ -10,13 +10,13 @@ import matplotlib.pyplot as plt
 # Data Generation
 np.random.seed(1)
 
-data_type = 'Uniform' # Uniform or ar1
+data_type = 'Gaussian' # Uniform or ar1 or Gaussian
 n = 900
 p = 2000
 s = 4
-B = 3.5
+B = 0.5
 rho = 0.3
-signal = 'strong'
+signal = 'weak'
 
 if data_type == 'Uniform':
     X = np.random.uniform(-1, 1, n*p).reshape(n,p)
@@ -26,6 +26,13 @@ if data_type == 'ar1':
     X = np.random.multivariate_normal(mean = np.zeros(p), cov = Sigma, size = n)
     scaler1 = StandardScaler(with_mean=True, with_std= True).fit(X)
     X = normalize(scaler1.transform(X), axis=0)
+    e = np.random.uniform(-0.1, 0.1, size = n)
+if data_type == 'Gaussian':
+    X = np.random.multivariate_normal(mean = np.zeros(p), cov = np.identity(p), size = n)
+    # scaler1 = StandardScaler(with_mean=True, with_std= True).fit(X)
+    # X = normalize(scaler1.transform(X), axis=0)
+    # X = normalize(X, axis=0)
+    X = normalize(X, norm='max', axis=1) # normalize by max by row
     e = np.random.uniform(-0.1, 0.1, size = n)
 beta = np.zeros(p)
 if signal == 'weak': beta[0:s] = 2.0 * np.sqrt(1 * np.log(p)/n)
@@ -55,7 +62,6 @@ tuning_parameters = {'epsilon': 0.5,
 
 
 eps_list = [0.5, 1, 2.5, 3, 5, 10]
-# eps_list = [0.5]
 for eps in eps_list:
     tuning_parameters['epsilon'] = eps
     model = ebreg(tuning_parameters)
@@ -84,6 +90,7 @@ for eps in eps_list:
     prec = len(np.intersect1d(S_abess, S))/max(1,len(S_abess))
     recall = len(np.intersect1d(S_abess, S))/len(S)
     F1_abess = 2/(1/prec + 1/recall)
+    print(f"F1 score ABESS in signal {signal}: {F1_abess:.4f}")
 
     RSS_abess = np.linalg.norm(y1 - X1@model_abess.coef_)**2/np.linalg.norm(y1)**2
     RSS_true = np.linalg.norm(y1 - X1@beta)**2/np.linalg.norm(y1)**2
